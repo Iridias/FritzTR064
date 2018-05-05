@@ -2,11 +2,6 @@
 
 Java-library to communicate with the AVM FritzBox by using the TR-064 protocol.
 
-## Dependencies
-
-This library depends on:
-
-* [HttpClient 4.x](https://hc.apache.org/httpcomponents-client-4.4.x/logging.html)
 
 ## Quickstart
 
@@ -27,8 +22,7 @@ Response response = action.execute();
 int deviceCount = response.getValueAsInteger("NewTotalAssociations");
 
 ```
-For more examples see: [The Example Folder](https://github.com/mirthas/FritzTR064/tree/master/examples)
+For more examples see [the available IntegrationTests](src/test/java/de/mapoll/javaAVMTR064/)
 
 ## Resorces
-* [AVM API Description](http://avm.de/service/schnittstellen/) (German)
-* [Examples](https://github.com/mirthas/FritzTR064/tree/master/examples)
+* [AVM API Description](https://avm.de/service/schnittstellen/) (German)
