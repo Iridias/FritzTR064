@@ -48,6 +48,7 @@ import de.mapoll.javaAVMTR064.beans.ActionType;
 import de.mapoll.javaAVMTR064.beans.ArgumentType;
 import de.mapoll.javaAVMTR064.beans.ServiceType;
 import de.mapoll.javaAVMTR064.beans.StateVariableType;
+import de.mapoll.javaAVMTR064.core.CommunicationService;
 import de.mapoll.javaAVMTR064.util.HelperUtils;
 
 public class Action {

@@ -28,9 +28,11 @@ package de.mapoll.javaAVMTR064;
 import de.mapoll.javaAVMTR064.beans.DeviceType;
 import de.mapoll.javaAVMTR064.beans.RootType;
 import de.mapoll.javaAVMTR064.beans.ServiceType;
+import de.mapoll.javaAVMTR064.core.CommunicationService;
+import de.mapoll.javaAVMTR064.core.ParserService;
 import de.mapoll.javaAVMTR064.exception.ProtocolException;
-import de.mapoll.javaAVMTR064.service.HttpCommunicationService;
-import de.mapoll.javaAVMTR064.service.ServiceFactory;
+import de.mapoll.javaAVMTR064.core.service.HttpCommunicationService;
+import de.mapoll.javaAVMTR064.core.service.ServiceFactory;
 
 import java.io.IOException;
 import java.io.InputStream;

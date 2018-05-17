@@ -24,6 +24,7 @@
  */
 package de.mapoll.javaAVMTR064;
 
+import de.mapoll.javaAVMTR064.core.CommunicationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

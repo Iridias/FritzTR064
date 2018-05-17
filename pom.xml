@@ -5,11 +5,11 @@
 	<groupId>de.mapoll</groupId>
 
 	<artifactId>fritzTR064-client</artifactId>
-	<version>2.0.0</version>
+	<version>2.1.0</version>
 
 	<name>FritzTR064</name>
 	<description>Java-library to communicate with the AVM FritzBox by using the TR-064 protocol.</description>
-	<url>https://github.com/mirthas/FritzTR064</url>
+	<url>https://github.com/Iridias/FritzTR064</url>
 
 	<licenses>
 		<license>
@@ -20,9 +20,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:ssh://github.com/mirthas/FritzTR064.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/mirthas/FritzTR064.git</developerConnection>
-		<url>https://github.com/mirthas/FritzTR064</url>
+		<connection>scm:git:ssh://github.com/Iridias/FritzTR064.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/Iridias/FritzTR064.git</developerConnection>
+		<url>https://github.com/Iridias/FritzTR064</url>
 	</scm>
 
 	<dependencies>
@@ -49,28 +49,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.15</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun.jmx</groupId>
-					<artifactId>jmxri</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.jdmk</groupId>
-					<artifactId>jmxtools</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.jms</groupId>
-					<artifactId>jms</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.mail</groupId>
-					<artifactId>mail</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -90,7 +71,6 @@
 			<version>2.18.3</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -98,15 +78,25 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.21.0</version>
 				<configuration>
 					<excludes>
 						<exclude>**/*IntegrationTest.java</exclude>

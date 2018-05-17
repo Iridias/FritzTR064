@@ -22,23 +22,15 @@
  *
  **********************************************************************************************************************
  */
-package de.mapoll.javaAVMTR064.service;
+package de.mapoll.javaAVMTR064.core;
 
-import de.mapoll.javaAVMTR064.ParserService;
-import org.junit.Test;
+import java.io.IOException;
+import java.io.InputStream;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-
-public class ServiceFactoryTest {
+public interface CommunicationService {
+	InputStream retrieveData(String path) throws IOException;
 	
-	@Test
-	public void testGetParserService() {
-		ParserService result = ServiceFactory.getParserService();
-		assertNotNull(result);
-		
-		ParserService result2 = ServiceFactory.getParserService();
-		assertSame(result, result2);
-	}
+	InputStream sendData(String path, String action, String messageBody) throws IOException;
 	
+	void applyCredentials(String user, String password);
 }

@@ -22,7 +22,7 @@
  *
  **********************************************************************************************************************
  */
-package de.mapoll.javaAVMTR064.service;
+package de.mapoll.javaAVMTR064.core.service;
 
 import de.mapoll.javaAVMTR064.beans.RootType;
 import de.mapoll.javaAVMTR064.beans.ScpdType;

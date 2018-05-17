@@ -22,9 +22,9 @@
  *
  **********************************************************************************************************************
  */
-package de.mapoll.javaAVMTR064.service;
+package de.mapoll.javaAVMTR064.core.service;
 
-import de.mapoll.javaAVMTR064.CommunicationService;
+import de.mapoll.javaAVMTR064.core.CommunicationService;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;

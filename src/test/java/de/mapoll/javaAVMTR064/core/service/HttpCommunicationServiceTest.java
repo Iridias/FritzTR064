@@ -22,7 +22,7 @@
  *
  **********************************************************************************************************************
  */
-package de.mapoll.javaAVMTR064.service;
+package de.mapoll.javaAVMTR064.core.service;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.*;

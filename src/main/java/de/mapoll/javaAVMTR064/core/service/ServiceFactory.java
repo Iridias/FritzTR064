@@ -22,15 +22,18 @@
  *
  **********************************************************************************************************************
  */
-package de.mapoll.javaAVMTR064;
+package de.mapoll.javaAVMTR064.core.service;
 
-import java.io.IOException;
-import java.io.InputStream;
+import de.mapoll.javaAVMTR064.core.ParserService;
 
-public interface CommunicationService {
-	InputStream retrieveData(String path) throws IOException;
+public class ServiceFactory {
 	
-	InputStream sendData(String path, String action, String messageBody) throws IOException;
+	private static JAXBParserService parserService;
 	
-	void applyCredentials(String user, String password);
+	public static ParserService getParserService() {
+		if(parserService == null) {
+			parserService = new JAXBParserService();
+		}
+		return parserService;
+	}
 }
