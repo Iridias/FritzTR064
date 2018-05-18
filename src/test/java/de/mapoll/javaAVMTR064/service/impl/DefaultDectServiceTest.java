@@ -24,10 +24,6 @@
  */
 package de.mapoll.javaAVMTR064.service.impl;
 
-import de.mapoll.javaAVMTR064.Action;
-import de.mapoll.javaAVMTR064.FritzConnection;
-import de.mapoll.javaAVMTR064.Response;
-import de.mapoll.javaAVMTR064.Service;
 import de.mapoll.javaAVMTR064.exception.FritzServiceException;
 import de.mapoll.javaAVMTR064.model.dect.GenericDectEntry;
 import de.mapoll.javaAVMTR064.model.dect.SpecificDectEntry;
@@ -36,7 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -49,25 +44,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultDectServiceTest {
+public class DefaultDectServiceTest extends AbstractServiceTest {
 	
 	private static final String SERVICE_NAME = "X_AVM-DE_Dect:1";
 	
 	private DefaultDectService sut;
 	
-	@Mock
-	private FritzConnection connection;
-	@Mock
-	private Service dummyService;
-	@Mock
-	private Action dummyAction;
-	@Mock
-	private Response dummyResponse;
-	
 	@Before
 	public void init() {
-		given(connection.getService(SERVICE_NAME)).willReturn(dummyService);
-		given(dummyService.getAction(anyString())).willReturn(dummyAction);
+		super.init(SERVICE_NAME);
 		
 		sut = new DefaultDectService(connection);
 		
@@ -135,11 +120,7 @@ public class DefaultDectServiceTest {
 		
 		verify(dummyService, atLeastOnce()).getAction("GetGenericDectEntry");
 		verify(dummyAction, times(1)).execute(executionParametersAC.capture());
-		
-		Map<String,Object> params = executionParametersAC.getValue();
-		assertNotNull(params);
-		assertFalse(params.isEmpty());
-		assertEquals(index, params.get("NewIndex"));
+		verifyParameterArgument(executionParametersAC, "NewIndex", index);
 	}
 	
 	private void givenDectResponseWillReturnExpectedData(final SpecificDectEntry expected) throws NoSuchFieldException {
@@ -208,10 +189,35 @@ public class DefaultDectServiceTest {
 		
 		verify(dummyService, atLeastOnce()).getAction("GetSpecificDectEntry");
 		verify(dummyAction, times(1)).execute(executionParametersAC.capture());
+		verifyParameterArgument(executionParametersAC, "NewID", id);
+	}
+	
+	@Test(expected = FritzServiceException.class)
+	public void testTriggerUpdateDectDeviceForExceptionOnAction() throws IOException {
+		doThrow(new IOException("TEST")).when(dummyAction).execute(anyMap());
 		
+		sut.triggerUpdateDectDevice("42");
+	}
+	
+	@Test
+	public void testTriggerUpdateDectDevice() throws IOException {
+		String id = "42";
+		given(dummyAction.execute(anyMap())).willReturn(dummyResponse);
+		
+		sut.triggerUpdateDectDevice(id);
+		
+		ArgumentCaptor<Map<String,Object>> executionParametersAC = ArgumentCaptor.forClass(Map.class);
+		verify(dummyService, atLeastOnce()).getAction("DectDoUpdate");
+		verify(dummyAction, times(1)).execute(executionParametersAC.capture());
+		verifyParameterArgument(executionParametersAC, "NewID", id);
+	}
+	
+	
+	private void verifyParameterArgument(final ArgumentCaptor<Map<String,Object>> executionParametersAC, final String key, final Object value) {
 		Map<String,Object> params = executionParametersAC.getValue();
 		assertNotNull(params);
 		assertFalse(params.isEmpty());
-		assertEquals(id, params.get("NewID"));
+		assertEquals(value, params.get(key));
 	}
+	
 }

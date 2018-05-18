@@ -55,4 +55,10 @@ public interface DectService {
 	 * @throws de.mapoll.javaAVMTR064.exception.FritzServiceException if something goes wrong (e.g. the index is invalid)
 	 */
 	GenericDectEntry findGenericDectEntry(int index);
+	
+	/**
+	 * @param id of the DectEntry
+	 * @throws de.mapoll.javaAVMTR064.exception.FritzServiceException if something goes wrong (e.g. the ID is invalid)
+	 */
+	void triggerUpdateDectDevice(String id);
 }

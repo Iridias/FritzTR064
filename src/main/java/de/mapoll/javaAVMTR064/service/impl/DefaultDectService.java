@@ -24,57 +24,39 @@
  */
 package de.mapoll.javaAVMTR064.service.impl;
 
-import de.mapoll.javaAVMTR064.Action;
 import de.mapoll.javaAVMTR064.FritzConnection;
 import de.mapoll.javaAVMTR064.Response;
-import de.mapoll.javaAVMTR064.Service;
-import de.mapoll.javaAVMTR064.exception.FritzServiceException;
 import de.mapoll.javaAVMTR064.model.dect.GenericDectEntry;
 import de.mapoll.javaAVMTR064.model.dect.SpecificDectEntry;
 import de.mapoll.javaAVMTR064.model.dect.UpdateStatus;
 import de.mapoll.javaAVMTR064.service.DectService;
 
-import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
-public class DefaultDectService implements DectService {
-	
-	private FritzConnection connection;
-	private Service service;
+public class DefaultDectService extends AbstractDefaultService implements DectService {
 	
 	public DefaultDectService(final FritzConnection connection) {
-		this.connection = connection;
 		this.service = connection.getService("X_AVM-DE_Dect:1");
 	}
 	
 	@Override
 	public int findNumberOfDectEntries() {
-		Action action = service.getAction("GetNumberOfDectEntries");
-		int amount;
-		try {
-			Response response = action.execute();
-			amount = response.getValueAsInteger("NewNumberOfEntries");
-		} catch (IOException|NoSuchFieldException e) {
-			throw new FritzServiceException("Unable to retrieve number of DECT-Entries", e);
-		}
-		
-		return amount;
+		return executeAction("GetNumberOfDectEntries", null, this::determineEntryAmount);
+	}
+	
+	private int determineEntryAmount(final Response response, final Map<String,Object> params) throws NoSuchFieldException {
+		return response.getValueAsInteger("NewNumberOfEntries");
 	}
 
 	@Override
 	public SpecificDectEntry findSpecificDectEntry(final String id) {
-		Action action = service.getAction("GetSpecificDectEntry");
-		try {
-			Response response = action.execute(Collections.singletonMap("NewID", id));
-			return buildSpecificDectEntryFromResponse(response, id);
-		} catch (IOException|NoSuchFieldException e) {
-			throw new FritzServiceException("Unable to retrieve Specific DECT-Entry for ID " + id, e);
-		}
+		return executeAction("GetSpecificDectEntry", Collections.singletonMap("NewID", id), this::buildSpecificDectEntryFromResponse);
 	}
 	
-	private SpecificDectEntry buildSpecificDectEntryFromResponse(final Response response, final String id) throws NoSuchFieldException {
+	private SpecificDectEntry buildSpecificDectEntryFromResponse(final Response response, final Map<String,Object> params) throws NoSuchFieldException {
 		SpecificDectEntry.Builder b = new SpecificDectEntry.Builder();
-		b.setId(id);
+		b.setId(firstValueFromMap(params, String.class));
 		
 		enrichDectEntryBuilderFromResponse(b, response);
 		
@@ -83,18 +65,12 @@ public class DefaultDectService implements DectService {
 	
 	@Override
 	public GenericDectEntry findGenericDectEntry(final int index) {
-		Action action = service.getAction("GetGenericDectEntry");
-		try {
-			Response response = action.execute(Collections.singletonMap("NewIndex", index));
-			return buildGenericDectEntryFromResponse(response, index);
-		} catch (IOException|NoSuchFieldException e) {
-			throw new FritzServiceException("Unable to retrieve Generic DECT-Entry for index " + index, e);
-		}
+		return executeAction("GetGenericDectEntry", Collections.singletonMap("NewIndex", index), this::buildGenericDectEntryFromResponse);
 	}
 	
-	private GenericDectEntry buildGenericDectEntryFromResponse(final Response response, final int index) throws NoSuchFieldException {
+	private GenericDectEntry buildGenericDectEntryFromResponse(final Response response, final Map<String,Object> params) throws NoSuchFieldException {
 		GenericDectEntry.Builder b = new GenericDectEntry.Builder();
-		b.setIndex(index);
+		b.setIndex(firstValueFromMap(params, Integer.class));
 		b.setId(response.getValueAsString("NewID"));
 		
 		enrichDectEntryBuilderFromResponse(b, response);
@@ -117,5 +93,10 @@ public class DefaultDectService implements DectService {
 		} catch (IllegalArgumentException e) {
 			return UpdateStatus.unknown;
 		}
+	}
+	
+	@Override
+	public void triggerUpdateDectDevice(final String id) {
+		executeAction("DectDoUpdate", Collections.singletonMap("NewID", id));
 	}
 }
