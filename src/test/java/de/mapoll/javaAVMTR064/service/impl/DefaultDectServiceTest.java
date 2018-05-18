@@ -1,3 +1,27 @@
+/*
+ * *********************************************************************************************************************
+ *
+ * javaAVMTR064 - open source Java TR-064 API
+ *===========================================
+ *
+ * Copyright 2018 Iridias (https://github.com/Iridias)
+ *
+ ***********************************************************************************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ **********************************************************************************************************************
+ */
 package de.mapoll.javaAVMTR064.service.impl;
 
 import de.mapoll.javaAVMTR064.Action;
@@ -6,6 +30,7 @@ import de.mapoll.javaAVMTR064.Response;
 import de.mapoll.javaAVMTR064.Service;
 import de.mapoll.javaAVMTR064.exception.FritzServiceException;
 import de.mapoll.javaAVMTR064.model.dect.GenericDectEntry;
+import de.mapoll.javaAVMTR064.model.dect.SpecificDectEntry;
 import de.mapoll.javaAVMTR064.model.dect.UpdateStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -117,7 +142,7 @@ public class DefaultDectServiceTest {
 		assertEquals(index, params.get("NewIndex"));
 	}
 	
-	private void givenDectResponseWillReturnExpectedData(final GenericDectEntry expected) throws NoSuchFieldException {
+	private void givenDectResponseWillReturnExpectedData(final SpecificDectEntry expected) throws NoSuchFieldException {
 		given(dummyResponse.getValueAsString("NewID")).willReturn(expected.getId());
 		given(dummyResponse.getValueAsBoolean("NewActive")).willReturn(expected.isActive());
 		given(dummyResponse.getValueAsString("NewName")).willReturn(expected.getName());
@@ -130,6 +155,19 @@ public class DefaultDectServiceTest {
 	private GenericDectEntry buildExpectedGenericDectEntry(final int index) {
 		GenericDectEntry.Builder b = new GenericDectEntry.Builder();
 		b.setIndex(index);
+		enrichDectEntryBuilder(b);
+		
+		return b.build();
+	}
+	
+	private SpecificDectEntry buildExpectedSpecificDectEntry() {
+		SpecificDectEntry.Builder b = new SpecificDectEntry.Builder();
+		enrichDectEntryBuilder(b);
+		
+		return b.build();
+	}
+	
+	private void enrichDectEntryBuilder(final SpecificDectEntry.Builder b) {
 		b.setActive(true);
 		b.setId("42");
 		b.setModel("Dummy Model");
@@ -137,7 +175,43 @@ public class DefaultDectServiceTest {
 		b.setUpdateAvailable(false);
 		b.setUpdateInfo("No Update");
 		b.setUpdateStatus(UpdateStatus.unknown);
+	}
+	
+	@Test(expected = FritzServiceException.class)
+	public void testFindSpecificDectEntryForExceptionOnAction() throws IOException {
+		doThrow(new IOException("TEST")).when(dummyAction).execute(anyMap());
 		
-		return b.build();
+		sut.findSpecificDectEntry("42");
+	}
+	
+	@Test(expected = FritzServiceException.class)
+	public void testFindSpecificDectEntryForInvalidResponse() throws IOException, NoSuchFieldException {
+		given(dummyAction.execute(anyMap())).willReturn(dummyResponse);
+		doThrow(new NoSuchFieldException("TEST")).when(dummyResponse).getValueAsString(anyString());
+		
+		sut.findSpecificDectEntry("42");
+	}
+	
+	@Test
+	public void testFindSpecificDectEntry() throws IOException, NoSuchFieldException {
+		String id = "42";
+		SpecificDectEntry expected = buildExpectedSpecificDectEntry();
+		
+		given(dummyAction.execute(anyMap())).willReturn(dummyResponse);
+		givenDectResponseWillReturnExpectedData(expected);
+		
+		SpecificDectEntry result = sut.findSpecificDectEntry(id);
+		assertNotNull(result);
+		assertEquals(expected, result);
+		
+		ArgumentCaptor<Map<String,Object>> executionParametersAC = ArgumentCaptor.forClass(Map.class);
+		
+		verify(dummyService, atLeastOnce()).getAction("GetSpecificDectEntry");
+		verify(dummyAction, times(1)).execute(executionParametersAC.capture());
+		
+		Map<String,Object> params = executionParametersAC.getValue();
+		assertNotNull(params);
+		assertFalse(params.isEmpty());
+		assertEquals(id, params.get("NewID"));
 	}
 }
