@@ -24,6 +24,10 @@
  */
 package de.mapoll.javaAVMTR064.service;
 
+import de.mapoll.javaAVMTR064.model.homeauto.GenericDeviceInfos;
+import de.mapoll.javaAVMTR064.model.homeauto.SpecificDeviceInfos;
+import de.mapoll.javaAVMTR064.model.homeauto.SwitchState;
+
 /**
  * Wrapper to the AVM TR-064 Homeauto-Service: urn:X_AVM-DE_Homeauto-com:serviceId:X_AVM-DE_Homeauto1
  *
@@ -31,4 +35,19 @@ package de.mapoll.javaAVMTR064.service;
  */
 public interface HomeAutomationService {
 	
+	/**
+	 * @param index must be >= 0
+	 * @return an immutable {@link GenericDeviceInfos} with data of the device at the specified index. Never null!
+	 * @throws de.mapoll.javaAVMTR064.exception.FritzServiceException if something goes wrong (e.g. the index is invalid)
+	 */
+	GenericDeviceInfos findGenericDeviceInfos(int index);
+	
+	/**
+	 * @param deviceIdentifier of the DeviceInfo
+	 * @return an immutable {@link SpecificDeviceInfos} with data of the device with the specified deviceIdentifier. Never null!
+	 * @throws de.mapoll.javaAVMTR064.exception.FritzServiceException if something goes wrong (e.g. the ID is invalid)
+	 */
+	SpecificDeviceInfos findSpecificDeviceInfos(String deviceIdentifier);
+	
+	void configureSocketState(String deviceIdentifier, SwitchState switchState);
 }

@@ -28,5 +28,13 @@ public enum ConnectionStatus {
 	DISCONNECTED,
 	REGISTERED,
 	CONNECTED,
-	UNKNOWN
+	UNKNOWN;
+	
+	public static ConnectionStatus fromString(final String str) {
+		try {
+			return ConnectionStatus.valueOf(str);
+		} catch (IllegalArgumentException e) {
+			return UNKNOWN;
+		}
+	}
 }

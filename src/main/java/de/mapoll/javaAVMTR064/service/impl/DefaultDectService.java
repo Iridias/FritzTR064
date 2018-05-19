@@ -84,15 +84,7 @@ public class DefaultDectService extends AbstractDefaultService implements DectSe
 		b.setModel(response.getValueAsString("NewModel"));
 		b.setUpdateAvailable(response.getValueAsBoolean("NewUpdateAvailable"));
 		b.setUpdateInfo(response.getValueAsString("NewUpdateInfo"));
-		b.setUpdateStatus(determineUpdateStatus(response.getValueAsString("NewUpdateSuccessful")));
-	}
-	
-	private UpdateStatus determineUpdateStatus(final String status) {
-		try {
-			return UpdateStatus.valueOf(status);
-		} catch (IllegalArgumentException e) {
-			return UpdateStatus.unknown;
-		}
+		b.setUpdateStatus(UpdateStatus.fromString(response.getValueAsString("NewUpdateSuccessful")));
 	}
 	
 	@Override

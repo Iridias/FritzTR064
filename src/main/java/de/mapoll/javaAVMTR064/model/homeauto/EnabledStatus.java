@@ -27,5 +27,13 @@ package de.mapoll.javaAVMTR064.model.homeauto;
 public enum EnabledStatus {
 	DISABLED,
 	ENABLED,
-	UNDEFINED
+	UNDEFINED;
+	
+	public static EnabledStatus fromString(final String str) {
+		try {
+			return EnabledStatus.valueOf(str);
+		} catch (IllegalArgumentException e) {
+			return UNDEFINED;
+		}
+	}
 }

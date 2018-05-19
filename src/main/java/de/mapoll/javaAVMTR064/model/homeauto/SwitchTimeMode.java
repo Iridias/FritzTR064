@@ -27,5 +27,13 @@ package de.mapoll.javaAVMTR064.model.homeauto;
 public enum SwitchTimeMode {
 	AUTO,
 	MANUAL,
-	UNDEFINED
+	UNDEFINED;
+	
+	public static SwitchTimeMode fromString(final String str) {
+		try {
+			return SwitchTimeMode.valueOf(str);
+		} catch (IllegalArgumentException e) {
+			return UNDEFINED;
+		}
+	}
 }

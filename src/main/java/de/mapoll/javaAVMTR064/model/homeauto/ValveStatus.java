@@ -27,5 +27,13 @@ package de.mapoll.javaAVMTR064.model.homeauto;
 public enum ValveStatus {
 	CLOSED,
 	OPEN,
-	TEMP
+	TEMP;
+	
+	public static ValveStatus fromString(final String str) {
+		try {
+			return ValveStatus.valueOf(str);
+		} catch (IllegalArgumentException e) {
+			return TEMP;
+		}
+	}
 }

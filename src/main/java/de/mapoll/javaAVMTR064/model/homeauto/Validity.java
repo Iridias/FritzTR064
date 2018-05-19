@@ -27,5 +27,13 @@ package de.mapoll.javaAVMTR064.model.homeauto;
 public enum Validity {
 	INVALID,
 	VALID,
-	UNDEFINED
+	UNDEFINED;
+	
+	public static Validity fromString(final String str) {
+		try {
+			return Validity.valueOf(str);
+		} catch (IllegalArgumentException e) {
+			return UNDEFINED;
+		}
+	}
 }

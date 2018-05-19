@@ -24,7 +24,6 @@
  */
 package de.mapoll.javaAVMTR064.service.impl;
 
-import de.mapoll.javaAVMTR064.exception.FritzServiceException;
 import de.mapoll.javaAVMTR064.model.dect.GenericDectEntry;
 import de.mapoll.javaAVMTR064.model.dect.SpecificDectEntry;
 import de.mapoll.javaAVMTR064.model.dect.UpdateStatus;
@@ -32,23 +31,26 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class DefaultDectServiceTest extends AbstractServiceTest {
 	
 	private static final String SERVICE_NAME = "X_AVM-DE_Dect:1";
 	
 	private DefaultDectService sut;
+	
+	@Captor
+	private ArgumentCaptor<Map<String,Object>> executionParametersAC;
 	
 	@Before
 	public void init() {
@@ -59,19 +61,14 @@ public class DefaultDectServiceTest extends AbstractServiceTest {
 		verify(connection, times(1)).getService(SERVICE_NAME);
 	}
 	
-	@Test(expected = FritzServiceException.class)
-	public void testFindNumberOfDectEntriesForExceptionOnAction() throws IOException {
-		doThrow(new IOException("TEST")).when(dummyAction).execute();
-		
-		sut.findNumberOfDectEntries();
+	@Test
+	public void testFindNumberOfDectEntriesForExceptionOnAction() {
+		super.testExecuteCallForExceptionOnAction(() -> sut.findNumberOfDectEntries());
 	}
 	
-	@Test(expected = FritzServiceException.class)
-	public void testFindNumberOfDectEntriesForInvalidResponse() throws IOException, NoSuchFieldException {
-		given(dummyAction.execute()).willReturn(dummyResponse);
-		doThrow(new NoSuchFieldException("TEST")).when(dummyResponse).getValueAsInteger(anyString());
-		
-		sut.findNumberOfDectEntries();
+	@Test
+	public void testFindNumberOfDectEntriesForInvalidResponse() {
+		super.testExecuteCallForInvalidResponse(() -> sut.findNumberOfDectEntries());
 	}
 	
 	@Test
@@ -89,19 +86,14 @@ public class DefaultDectServiceTest extends AbstractServiceTest {
 		verify(dummyResponse, times(1)).getValueAsInteger("NewNumberOfEntries");
 	}
 	
-	@Test(expected = FritzServiceException.class)
-	public void testFindGenericDectEntryForExceptionOnAction() throws IOException {
-		doThrow(new IOException("TEST")).when(dummyAction).execute(anyMap());
-		
-		sut.findGenericDectEntry(21);
+	@Test
+	public void testFindGenericDectEntryForExceptionOnAction() {
+		super.testExecuteCallForExceptionOnAction(() -> sut.findGenericDectEntry(21));
 	}
 	
-	@Test(expected = FritzServiceException.class)
-	public void testFindGenericDectEntryForInvalidResponse() throws IOException, NoSuchFieldException {
-		given(dummyAction.execute(anyMap())).willReturn(dummyResponse);
-		doThrow(new NoSuchFieldException("TEST")).when(dummyResponse).getValueAsString(anyString());
-		
-		sut.findGenericDectEntry(21);
+	@Test
+	public void testFindGenericDectEntryForInvalidResponse() {
+		super.testExecuteCallForInvalidResponse(() -> sut.findGenericDectEntry(21));
 	}
 	
 	@Test
@@ -115,8 +107,6 @@ public class DefaultDectServiceTest extends AbstractServiceTest {
 		GenericDectEntry result = sut.findGenericDectEntry(index);
 		assertNotNull(result);
 		assertEquals(expected, result);
-		
-		ArgumentCaptor<Map<String,Object>> executionParametersAC = ArgumentCaptor.forClass(Map.class);
 		
 		verify(dummyService, atLeastOnce()).getAction("GetGenericDectEntry");
 		verify(dummyAction, times(1)).execute(executionParametersAC.capture());
@@ -158,19 +148,14 @@ public class DefaultDectServiceTest extends AbstractServiceTest {
 		b.setUpdateStatus(UpdateStatus.unknown);
 	}
 	
-	@Test(expected = FritzServiceException.class)
-	public void testFindSpecificDectEntryForExceptionOnAction() throws IOException {
-		doThrow(new IOException("TEST")).when(dummyAction).execute(anyMap());
-		
-		sut.findSpecificDectEntry("42");
+	@Test
+	public void testFindSpecificDectEntryForExceptionOnAction() {
+		super.testExecuteCallForExceptionOnAction(() -> sut.findSpecificDectEntry("42"));
 	}
 	
-	@Test(expected = FritzServiceException.class)
-	public void testFindSpecificDectEntryForInvalidResponse() throws IOException, NoSuchFieldException {
-		given(dummyAction.execute(anyMap())).willReturn(dummyResponse);
-		doThrow(new NoSuchFieldException("TEST")).when(dummyResponse).getValueAsString(anyString());
-		
-		sut.findSpecificDectEntry("42");
+	@Test
+	public void testFindSpecificDectEntryForInvalidResponse() {
+		super.testExecuteCallForInvalidResponse(() -> sut.findSpecificDectEntry("42"));
 	}
 	
 	@Test
@@ -185,18 +170,14 @@ public class DefaultDectServiceTest extends AbstractServiceTest {
 		assertNotNull(result);
 		assertEquals(expected, result);
 		
-		ArgumentCaptor<Map<String,Object>> executionParametersAC = ArgumentCaptor.forClass(Map.class);
-		
 		verify(dummyService, atLeastOnce()).getAction("GetSpecificDectEntry");
 		verify(dummyAction, times(1)).execute(executionParametersAC.capture());
 		verifyParameterArgument(executionParametersAC, "NewID", id);
 	}
 	
-	@Test(expected = FritzServiceException.class)
-	public void testTriggerUpdateDectDeviceForExceptionOnAction() throws IOException {
-		doThrow(new IOException("TEST")).when(dummyAction).execute(anyMap());
-		
-		sut.triggerUpdateDectDevice("42");
+	@Test
+	public void testTriggerUpdateDectDeviceForExceptionOnAction() {
+		super.testExecuteCallForExceptionOnAction(() -> sut.triggerUpdateDectDevice("42"));
 	}
 	
 	@Test
@@ -206,18 +187,9 @@ public class DefaultDectServiceTest extends AbstractServiceTest {
 		
 		sut.triggerUpdateDectDevice(id);
 		
-		ArgumentCaptor<Map<String,Object>> executionParametersAC = ArgumentCaptor.forClass(Map.class);
 		verify(dummyService, atLeastOnce()).getAction("DectDoUpdate");
 		verify(dummyAction, times(1)).execute(executionParametersAC.capture());
 		verifyParameterArgument(executionParametersAC, "NewID", id);
-	}
-	
-	
-	private void verifyParameterArgument(final ArgumentCaptor<Map<String,Object>> executionParametersAC, final String key, final Object value) {
-		Map<String,Object> params = executionParametersAC.getValue();
-		assertNotNull(params);
-		assertFalse(params.isEmpty());
-		assertEquals(value, params.get(key));
 	}
 	
 }

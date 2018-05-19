@@ -28,10 +28,18 @@ import de.mapoll.javaAVMTR064.Action;
 import de.mapoll.javaAVMTR064.FritzConnection;
 import de.mapoll.javaAVMTR064.Response;
 import de.mapoll.javaAVMTR064.Service;
+import de.mapoll.javaAVMTR064.exception.FritzServiceException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
+import java.io.IOException;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 public abstract class AbstractServiceTest {
 	
@@ -49,4 +57,41 @@ public abstract class AbstractServiceTest {
 		given(dummyService.getAction(anyString())).willReturn(dummyAction);
 	}
 	
+	protected void testExecuteCallForExceptionOnAction(final Runnable runner) {
+		try {
+			doThrow(new IOException("TEST")).when(dummyAction).execute();
+			doThrow(new IOException("TEST")).when(dummyAction).execute(anyMap());
+			
+			runner.run();
+			fail("Expected FritzServiceException");
+		} catch (IOException e) {
+			fail("Unexpected behaviour");
+		} catch (FritzServiceException e) {
+			assertNotNull(e);
+		}
+	}
+	
+	protected void testExecuteCallForInvalidResponse(final Runnable runner) {
+		try {
+			given(dummyAction.execute()).willReturn(dummyResponse);
+			given(dummyAction.execute(anyMap())).willReturn(dummyResponse);
+			doThrow(new NoSuchFieldException("TEST")).when(dummyResponse).getValueAsInteger(anyString());
+			doThrow(new NoSuchFieldException("TEST")).when(dummyResponse).getValueAsString(anyString());
+			doThrow(new NoSuchFieldException("TEST")).when(dummyResponse).getValueAsBoolean(anyString());
+			
+			runner.run();
+			fail("Expected FritzServiceException");
+		} catch (IOException|NoSuchFieldException e) {
+			fail("Unexpected behaviour");
+		} catch (FritzServiceException e) {
+			assertNotNull(e);
+		}
+	}
+	
+	protected void verifyParameterArgument(final ArgumentCaptor<Map<String, Object>> executionParametersAC, final String key, final Object value) {
+		Map<String,Object> params = executionParametersAC.getValue();
+		assertNotNull(params);
+		assertFalse(params.isEmpty());
+		assertEquals(value, params.get(key));
+	}
 }

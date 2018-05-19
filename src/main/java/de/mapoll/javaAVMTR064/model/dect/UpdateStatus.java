@@ -27,5 +27,13 @@ package de.mapoll.javaAVMTR064.model.dect;
 public enum UpdateStatus {
 	unknown,
 	failed,
-	succeeded
+	succeeded;
+	
+	public static UpdateStatus fromString(final String str) {
+		try {
+			return UpdateStatus.valueOf(str);
+		} catch (IllegalArgumentException e) {
+			return unknown;
+		}
+	}
 }

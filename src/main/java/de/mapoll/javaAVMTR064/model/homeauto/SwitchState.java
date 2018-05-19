@@ -28,5 +28,13 @@ public enum SwitchState {
 	OFF,
 	ON,
 	TOGGLE,
-	UNDEFINED
+	UNDEFINED;
+	
+	public static SwitchState fromString(final String str) {
+		try {
+			return SwitchState.valueOf(str);
+		} catch (IllegalArgumentException e) {
+			return UNDEFINED;
+		}
+	}
 }
